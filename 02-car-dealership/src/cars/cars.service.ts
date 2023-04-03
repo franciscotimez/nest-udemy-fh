@@ -61,4 +61,8 @@ export class CarsService {
 
     return cardDB;
   }
+
+  fillCarsWithSeedData(cars: Car[]) {
+    this.cars = cars;
+  }
 }

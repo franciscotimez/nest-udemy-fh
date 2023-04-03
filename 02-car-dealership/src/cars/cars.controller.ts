@@ -5,10 +5,13 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
+
+const myUUIDPipe = new ParseUUIDPipe({ version: '4' });
 
 // * Aca se declaran los endpoints
 @Controller('cars')
@@ -21,8 +24,8 @@ export class CarsController {
   }
 
   @Get(':id')
-  getCarById(@Param('id', ParseIntPipe) id: number) {
-    return this.carsService.findOneById(+id);
+  getCarById(@Param('id', myUUIDPipe) id: string) {
+    return this.carsService.findOneById(id);
   }
 
   @Post()

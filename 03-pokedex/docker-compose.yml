@@ -12,3 +12,4 @@ services:
     volumes:
       - ./mongoData/db:/data/db
       - ./mongoData/configdb:/data/configdb
+

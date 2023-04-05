@@ -1,6 +1,9 @@
 # Data DB
 /mongoData
 
+# Env Files
+.env
+
 # compiled output
 /dist
 /node_modules

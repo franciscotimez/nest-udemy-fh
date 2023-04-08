@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto';
+import { IJwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService : JwtService
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -55,16 +57,8 @@ export class AuthService {
     return user;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+  private getJwtToken(payload: IJwtPayload) {
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} User`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} User`;
   }
 
   private handleDbExceptions(error: any): never {

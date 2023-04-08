@@ -1,8 +1,10 @@
+import { Product } from '../../products/entities/product.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -34,6 +36,10 @@ export class User {
     default: ['user'],
   })
   roles: string[];
+
+  // (() => [Entidad], (instancia) => instancia.propiedad)
+  @OneToMany(() => Product, (product) => product.user)
+  product: Product;
 
   @BeforeInsert()
   @BeforeUpdate()

@@ -3,9 +3,7 @@ import {
   Get,
   Post,
   Res,
-  Patch,
   Param,
-  Delete,
   UploadedFile,
   UseInterceptors,
   BadRequestException,
@@ -16,10 +14,14 @@ import { diskStorage } from 'multer';
 import { FilesService } from './files.service';
 import { fileFilter, fileNamer } from './helpers';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+  constructor(
+    private readonly filesService: FilesService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Get('product/:imageName')
   findProductImage(
@@ -45,7 +47,8 @@ export class FilesController {
   uploadProductImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) throw new BadRequestException('File Rejected!');
 
-    const secureUrl = `${file.filename}`;
+    const hostname = this.configService.get('HOST_API');
+    const secureUrl = `${hostname}/files/product/${file.filename}`;
     return { secureUrl };
   }
 }

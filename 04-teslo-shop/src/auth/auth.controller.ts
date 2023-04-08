@@ -10,8 +10,8 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
-import { GetUser } from './decorators/get-user.decorator';
 import { User } from './entities/user.entity';
+import { GetUser, RawHeaders } from './decorators';
 
 @Controller('auth')
 export class AuthController {
@@ -33,9 +33,10 @@ export class AuthController {
   testingPrivateRoute(
     @GetUser() user: User,
     @GetUser('email') userEmail: string,
+    @RawHeaders() rawHeaders: string[],
   ) {
     console.log({ user });
 
-    return { user, userEmail };
+    return { user, userEmail, rawHeaders };
   }
 }

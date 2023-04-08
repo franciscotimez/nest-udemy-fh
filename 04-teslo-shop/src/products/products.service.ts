@@ -12,6 +12,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { ProductImage, Product } from './entities';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -27,7 +28,7 @@ export class ProductsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       const { images = [], ...productRest } = createProductDto;
 
@@ -36,6 +37,7 @@ export class ProductsService {
         images: images.map((url) =>
           this.productImageRepository.create({ url }),
         ),
+        user,
       });
 
       await this.productRepository.save(product);
@@ -91,10 +93,13 @@ export class ProductsService {
     };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     const { images, ...toUpdate } = updateProductDto;
 
-    const product = await this.productRepository.preload({ id, ...toUpdate });
+    const product = await this.productRepository.preload({
+      id,
+      ...toUpdate,
+    });
 
     if (!product)
       throw new NotFoundException(`Product with id '${id}' not found`);
@@ -111,6 +116,8 @@ export class ProductsService {
           this.productImageRepository.create({ url }),
         );
       }
+
+      product.user = user;
 
       await queryRunner.manager.save(product);
       await queryRunner.commitTransaction();

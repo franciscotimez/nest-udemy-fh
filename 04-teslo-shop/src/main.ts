@@ -19,7 +19,6 @@ async function main() {
     .setTitle('Teslo API - FH')
     .setDescription('Teslo API endpoints')
     .setVersion('1.0')
-    .addTag('products')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);

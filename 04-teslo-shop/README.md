@@ -10,3 +10,4 @@
 4. Cambiar las variables de entorno segun corresponda
 5. Levantar la base de datos `docker-compose up -d`
 6. Levantar el proyecto `yarn start:dev`
+7. Ejecutar Seed Data `http://localhost:3000/api/seed`

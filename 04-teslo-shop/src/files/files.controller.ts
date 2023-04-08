@@ -8,22 +8,35 @@ import {
   Delete,
   UploadedFile,
   UseInterceptors,
+  BadRequestException,
 } from '@nestjs/common';
-import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { fileFilter } from './helpers/fileFilter.helper';
-import { BadRequestException } from '@nestjs/common';
+import { diskStorage } from 'multer';
+
+import { FilesService } from './files.service';
+import { fileFilter, fileNamer } from './helpers';
 
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Post('product')
-  @UseInterceptors(FileInterceptor('file', { fileFilter: fileFilter }))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: fileFilter,
+      // limits: { fileSize: 1000 },
+      storage: diskStorage({
+        destination: './static/products',
+        filename: fileNamer,
+      }),
+    }),
+  )
   uploadProductImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) throw new BadRequestException('File Rejected!');
+
+    console.log({ file });
     return {
-      filename: file.originalname,
+      filename: file.filename,
     };
   }
 }

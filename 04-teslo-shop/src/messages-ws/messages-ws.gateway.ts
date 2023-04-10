@@ -14,9 +14,13 @@ export class MessagesWsGateway
 
   handleConnection(client: Socket) {
     console.log('Cliente Conectado:', client.id);
+    this.messagesWsService.registerClient(client);
+    console.log('Conectados -> ', this.messagesWsService.getConnectedClients());
   }
 
   handleDisconnect(client: Socket) {
     console.log('Cliente Desconectado:', client.id);
+    this.messagesWsService.removeClient(client.id);
+    console.log('Conectados -> ', this.messagesWsService.getConnectedClients());
   }
 }

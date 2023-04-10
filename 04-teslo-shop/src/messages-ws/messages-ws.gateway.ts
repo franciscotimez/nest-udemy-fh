@@ -22,12 +22,13 @@ export class MessagesWsGateway
     private readonly jwtService: JwtService,
   ) {}
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     const token = client.handshake.headers.authentication as string;
 
     let jwtPayload: IJwtPayload;
     try {
       jwtPayload = this.jwtService.verify(token);
+      await this.messagesWsService.registerClient(client, jwtPayload.id);
     } catch (error) {
       client.disconnect();
       return;
@@ -35,7 +36,6 @@ export class MessagesWsGateway
 
     console.log({ jwtPayload });
 
-    this.messagesWsService.registerClient(client);
     // ! Se pude hacer el join a una sala con: client.join('salaId')
     // ! Se puede emitir a una sala con this.wsServer.to('salaId').emit()
 
@@ -75,7 +75,7 @@ export class MessagesWsGateway
 
     // ! Emite a todos.
     this.wsServer.emit('message-from-server', {
-      fullName: client.id,
+      fullName: this.messagesWsService.getUserFullname(client.id),
       message: payload.message || 'no-message',
     });
   }

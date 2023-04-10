@@ -8,6 +8,8 @@ import {
 import { MessagesWsService } from './messages-ws.service';
 import { Server, Socket } from 'socket.io';
 import { NewMessageDto } from './dto/new-message.dto';
+import { JwtService } from '@nestjs/jwt';
+import { IJwtPayload } from '../auth/interfaces';
 
 @WebSocketGateway({ cors: true })
 export class MessagesWsGateway
@@ -15,11 +17,23 @@ export class MessagesWsGateway
 {
   @WebSocketServer() wsServer: Server;
 
-  constructor(private readonly messagesWsService: MessagesWsService) {}
+  constructor(
+    private readonly messagesWsService: MessagesWsService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   handleConnection(client: Socket) {
     const token = client.handshake.headers.authentication as string;
-    console.log({ token });
+
+    let jwtPayload: IJwtPayload;
+    try {
+      jwtPayload = this.jwtService.verify(token);
+    } catch (error) {
+      client.disconnect();
+      return;
+    }
+
+    console.log({ jwtPayload });
 
     this.messagesWsService.registerClient(client);
     // ! Se pude hacer el join a una sala con: client.join('salaId')

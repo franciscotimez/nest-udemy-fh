@@ -1,5 +1,7 @@
 import { Manager, Socket } from "socket.io-client";
 
+let socket: Socket;
+
 export const connectToServer = (jwtToken: string) => {
   // http://localhost:3000/socket.io/socket.io.js
   const manager = new Manager("http://localhost:3000/socket.io/socket.io.js", {
@@ -8,13 +10,14 @@ export const connectToServer = (jwtToken: string) => {
     },
   });
 
-  const socket = manager.socket("/");
+  socket?.removeAllListeners();
+  socket = manager.socket("/");
   // console.log({ socket });
 
-  addListeners(socket);
+  addListeners();
 };
 
-const addListeners = (socket: Socket) => {
+const addListeners = () => {
   // * id="clients-ul"
   // * id="message-form"
   // * id="message-input"

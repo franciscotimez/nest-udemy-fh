@@ -19,6 +19,9 @@ export class MessagesWsGateway
 
   handleConnection(client: Socket) {
     this.messagesWsService.registerClient(client);
+    // ! Se pude hacer el join a una sala con: client.join('salaId')
+    // ! Se puede emitir a una sala con this.wsServer.to('salaId').emit()
+
     this.wsServer.emit(
       'clients-updated',
       this.messagesWsService.getConnectedClients(),
@@ -37,9 +40,26 @@ export class MessagesWsGateway
     console.log('Cliente Desconectado:', client.id);
   }
 
-  // * message-from-client
+  // * "message-from-client"
   @SubscribeMessage('message-from-client')
   onMessageFromClient(client: Socket, payload: NewMessageDto) {
-    console.log({ id: client.id, message: payload.message });
+    // * "message-from-server"
+    // ! Emite al cliente remitente
+    // client.emit('message-from-server', {
+    //   fullName: client.id,
+    //   message: payload.message || 'no-message',
+    // });
+
+    // !Emite a todos menos al remitente
+    // client.broadcast.emit('message-from-server', {
+    //   fullName: client.id,
+    //   message: payload.message || 'no-message',
+    // });
+
+    // ! Emite a todos.
+    this.wsServer.emit('message-from-server', {
+      fullName: client.id,
+      message: payload.message || 'no-message',
+    });
   }
 }
